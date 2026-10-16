@@ -4,6 +4,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import retrofit2.Retrofit
 import retrofit2.http.GET
@@ -33,10 +35,11 @@ class AmphibiansContainer {
 private class NetworkAmphibiansRepository(
     private val service: AmphibiansApiService,
 ) : AmphibiansRepository {
-    override suspend fun getAmphibians(): List<Amphibian> =
+    override suspend fun getAmphibians(): List<Amphibian> = withContext(Dispatchers.IO) {
         service.getAmphibians().use { response ->
             AmphibiansJson.parse(response.string())
         }
+    }
 }
 
 object AmphibiansJson {

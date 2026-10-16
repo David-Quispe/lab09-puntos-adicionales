@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.lab09_puntosadicionales.data.Amphibian
 import com.example.lab09_puntosadicionales.data.AmphibiansRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 sealed interface AmphibiansUiState {
@@ -31,6 +32,8 @@ class AmphibiansViewModel(
         viewModelScope.launch {
             uiState = try {
                 AmphibiansUiState.Success(repository.getAmphibians())
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (_: Exception) {
                 AmphibiansUiState.Error
             }
