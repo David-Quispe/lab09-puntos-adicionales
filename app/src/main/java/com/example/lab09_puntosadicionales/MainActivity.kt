@@ -4,44 +4,29 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.lab09_puntosadicionales.ui.theme.Lab09puntosAdicionalesTheme
+import androidx.lifecycle.ViewModelProvider
+import com.example.lab09_puntosadicionales.ui.AmphibiansScreen
+import com.example.lab09_puntosadicionales.ui.AmphibiansViewModel
+import com.example.lab09_puntosadicionales.ui.theme.AmphibiansTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val repository = (application as AmphibiansApplication).container.repository
+        val viewModel = ViewModelProvider(
+            this,
+            AmphibiansViewModel.Factory(repository),
+        )[AmphibiansViewModel::class.java]
+
         setContent {
-            Lab09puntosAdicionalesTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+            AmphibiansTheme {
+                AmphibiansScreen(
+                    uiState = viewModel.uiState,
+                    onRetry = viewModel::refresh,
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Lab09puntosAdicionalesTheme {
-        Greeting("Android")
     }
 }
